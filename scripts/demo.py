@@ -102,14 +102,15 @@ def find_all(prefix: str, root=None) -> list[ET.Element]:
     return [n for n in root.iter("node") if rid(n).startswith(prefix)]
 
 
-def wait_for(timeout: float = 15, **query) -> ET.Element:
+def wait_for(timeout: float = 15, quiet: bool = False, **query) -> ET.Element:
     deadline = time.time() + timeout
     while time.time() < deadline:
         node = find(**query)
         if node is not None:
             return node
         time.sleep(0.4)
-    shot("FAILED")
+    if not quiet:
+        shot("FAILED")
     raise AssertionError(f"Timed out waiting for {query}")
 
 
@@ -130,7 +131,16 @@ def tap_node(node: ET.Element, factor: float = 1.0) -> None:
 
 
 def tap(tag=None, factor: float = 1.0, timeout: float = 15, **query) -> None:
-    node = wait_for(timeout=timeout, tag=tag, **query) if tag else wait_for(timeout=timeout, **query)
+    if tag:
+        query["tag"] = tag
+    try:
+        node = wait_for(timeout=min(timeout, 5), quiet=True, **query)
+    except AssertionError:
+        # Probably off-screen (e.g. behind the keyboard): dismiss it and scroll the target into view.
+        hide_keyboard()
+        node = find(**query)
+        if node is None:
+            node = scroll_to(**query)
     tap_node(node, factor)
 
 
@@ -326,7 +336,9 @@ wait_for(tag="today_screen")
 
 step("Add an assignment")
 go_tab("assignments", "assignments")
-tap("assignments_add", factor=1.5)
+check("Empty list explains what to do", wait_for(tag="assignments_empty") is not None)
+shot("assignments-empty")
+tap("assignments_empty_add", factor=1.5)
 wait_for(tag="editor_title")
 hide_keyboard()
 tap("editor_save", factor=1)
@@ -343,10 +355,10 @@ tap("date_confirm", factor=1.2)
 fill("editor_notes", "Measure g with three string lengths")
 hide_keyboard()
 shot("editor-new")
-tap("editor_save", factor=2)
+tap("editor_save", factor=0.3)
+check("Saved message is shown", wait_for(contains="Assignment added", timeout=6) is not None)
 wait_for(tag="assignments_screen")
 check("Assignment appears in the list", wait_for(contains="Lab report: pendulum") is not None)
-check("Saved message is shown", find(contains="Assignment added") is not None)
 shot("assignments-one")
 
 step("Focus — a 1-minute session")
@@ -381,12 +393,14 @@ go_tab("assignments", "assignments")
 row = wait_for(prefix="assignment_row_")
 x1, y1, x2, y2 = bounds(row)
 w, _ = screen_size()
-swipe(int(w * 0.12), (y1 + y2) // 2, int(w * 0.9), (y1 + y2) // 2, 450)
-check("Swipe shows an Undo snackbar", wait_for(tag="snackbar_action", timeout=8) is not None)
-check("Row leaves the open list", find(contains="Lab report: pendulum") is None)
+swipe(int(w * 0.12), (y1 + y2) // 2, int(w * 0.9), (y1 + y2) // 2, 600)
+undo = wait_for(tag="snackbar_action", timeout=8)
+root = dump()
+check("Swipe shows an Undo snackbar", undo is not None)
+check("Row leaves the open list", find(prefix="assignment_row_", root=root) is None)
 shot("assignments-done-undo")
-tap("snackbar_action", factor=2)
-check("Undo brings the assignment back", wait_for(contains="Lab report: pendulum") is not None)
+tap_node(undo, 2)
+check("Undo brings the assignment back", wait_for(prefix="assignment_row_") is not None)
 
 step("Set a daily goal")
 go_tab("profile", "profile")
@@ -461,24 +475,25 @@ tap("assignments_show_completed", factor=1.5)
 check("Completed work can be shown", scroll_to(tag="group_done") is not None)
 shot("assignments-completed")
 scroll_up(1.2)
-tap("assignments_show_completed", factor=1.5)
+tap("assignments_show_completed", factor=2.5)
+gone(tag="group_done")
 row = wait_for(prefix="assignment_row_")
-title_before = label(row)
 x1, y1, x2, y2 = bounds(row)
-swipe(int(w * 0.9), (y1 + y2) // 2, int(w * 0.1), (y1 + y2) // 2, 450)
-check("Swipe to done offers Undo", wait_for(tag="snackbar_action", timeout=8) is not None)
-tap("snackbar_action", factor=2)
+swipe(int(w * 0.9), (y1 + y2) // 2, int(w * 0.1), (y1 + y2) // 2, 600)
+undo = wait_for(tag="snackbar_action", timeout=8)
+check("Swipe to done offers Undo", undo is not None)
+tap_node(undo, 2)
 row = wait_for(prefix="assignment_row_")
 tap_node(row, 1.5)
 wait_for(tag="editor_title")
 pause(1)
 shot("editor-edit")
-fill("editor_title", "Eigenvalues problem set (Q4-12)")
+fill("editor_title", "Eigenvalues set, Q4 to Q12")
 hide_keyboard()
 tap("editor_priority_medium", factor=0.8)
 tap("editor_save", factor=2)
 wait_for(tag="assignments_screen")
-check("Edited title is shown", wait_for(contains="Eigenvalues problem set (Q4-12)") is not None)
+check("Edited title is shown", wait_for(contains="Eigenvalues set, Q4 to Q12") is not None)
 
 step("Subjects")
 tap("assignments_subjects", factor=1.5)

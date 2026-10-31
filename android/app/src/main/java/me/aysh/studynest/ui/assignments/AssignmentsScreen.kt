@@ -528,12 +528,14 @@ private fun EmptyAssignments(
                     text = stringResource(R.string.planner_new_assignment),
                     onClick = onNewAssignment,
                     leadingIcon = Icons.Rounded.Add,
+                    modifier = Modifier.testTag("assignments_empty_add"),
                 )
             } else {
                 PrimaryButton(
                     text = stringResource(R.string.planner_assignments_add_subject),
                     onClick = onOpenSubjects,
                     leadingIcon = Icons.Rounded.Add,
+                    modifier = Modifier.testTag("assignments_empty_add_subject"),
                 )
             }
         }
