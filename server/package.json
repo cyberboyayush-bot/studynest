@@ -1,0 +1,27 @@
+{
+  "name": "studynest-server",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "bun --watch src/index.ts",
+    "start": "bun src/index.ts",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "bun src/db/migrate.ts",
+    "db:seed": "bun src/db/seed.ts",
+    "test": "bun test",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@hono/zod-validator": "^0.9.1",
+    "better-auth": "^1.7.14",
+    "drizzle-orm": "^0.45.4",
+    "hono": "^4.13.14",
+    "postgres": "^4.0.0",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.4.4",
+    "drizzle-kit": "^0.31.11",
+    "typescript": "^7.0.2"
+  }
+}
