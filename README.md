@@ -24,7 +24,7 @@ assignments in one place, run timed focus sessions, and watch your week come tog
   <img src="artifacts/screenshots/53-insights-charts-dark.png" width="200" alt="Insights, dark">
 </p>
 
-All 53 screenshots (light and dark, every screen and state) are in [`artifacts/screenshots/`](artifacts/screenshots/), captured by the end-to-end run.
+All 56 screenshots (light and dark, every screen and state) are in [`artifacts/screenshots/`](artifacts/screenshots/), captured by the end-to-end run (plus dark Welcome, Sign up and Sign in).
 
 **Demo video:** [`artifacts/studynest-demo-2x.mp4`](artifacts/studynest-demo-2x.mp4) (2× speed, ~10 min) · full speed (~20 min):
 [`artifacts/studynest-demo.mp4`](artifacts/studynest-demo.mp4) — recorded on the release build by `scripts/record.sh`.
