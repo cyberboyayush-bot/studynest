@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Single-colour version of the StudyNest mark for themed icons (Android 13+). -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <group android:scaleX="0.6" android:scaleY="0.6" android:translateX="22" android:translateY="21">
+        <group android:rotation="-9" android:pivotX="38" android:pivotY="56">
+            <path android:strokeColor="#FFFFFFFF" android:strokeWidth="5" android:pathData="M28,22h18a6,6 0 0 1 6,6v28a6,6 0 0 1 -6,6h-18a6,6 0 0 1 -6,-6v-28a6,6 0 0 1 6,-6z" />
+            <path android:fillColor="#FFFFFFFF" android:pathData="M27,22.5h4v39h-4z" />
+        </group>
+        <group android:rotation="8" android:pivotX="62" android:pivotY="56">
+            <path android:strokeColor="#FFFFFFFF" android:strokeWidth="5" android:pathData="M53,16h20a6,6 0 0 1 6,6v32a6,6 0 0 1 -6,6h-20a6,6 0 0 1 -6,-6v-32a6,6 0 0 1 6,-6z" />
+            <path android:fillColor="#FFFFFFFF" android:pathData="M53,16.2h4v43.6h-4z" />
+        </group>
+        <path android:fillColor="#FFFFFFFF" android:pathData="M8,58C8,82 28,92 50,92C72,92 92,82 92,58C70,66 30,66 8,58z" />
+        <path android:strokeColor="#FFFFFFFF" android:strokeWidth="10" android:strokeLineCap="round" android:pathData="M8,58C30,68 70,68 92,58" />
+        <path android:fillColor="#FFFFFFFF" android:pathData="M94,26Q95.3,32.7 102,34Q95.3,35.3 94,42Q92.7,35.3 86,34Q92.7,32.7 94,26z" />
+    </group>
+</vector>

@@ -1,4 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- StudyNest mark: a woven nest cradling two books, with a sparkle. Drawn in a 100-unit box,
+     scaled to 60dp and centred inside the 66dp safe zone of the 108dp adaptive canvas. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="108dp" android:height="108dp" android:viewportWidth="108" android:viewportHeight="108">
-    <path android:fillColor="#FFFFFFFF" android:pathData="M54,34a20,20 0 1,0 0.01,0z" />
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <group android:scaleX="0.6" android:scaleY="0.6" android:translateX="22" android:translateY="21">
+        <!-- back of the nest -->
+        <path android:fillColor="#C98A4E" android:pathData="M10,61a40,9 0 1,0 80,0a40,9 0 1,0 -80,0z" />
+        <!-- mint book -->
+        <group android:rotation="-9" android:pivotX="38" android:pivotY="56">
+            <path android:fillColor="#8FD3AF" android:pathData="M28,25h18a6,6 0 0 1 6,6v28a6,6 0 0 1 -6,6h-18a6,6 0 0 1 -6,-6v-28a6,6 0 0 1 6,-6z" />
+            <path android:fillColor="#BDEBD2" android:pathData="M28,22h18a6,6 0 0 1 6,6v28a6,6 0 0 1 -6,6h-18a6,6 0 0 1 -6,-6v-28a6,6 0 0 1 6,-6z" />
+            <path android:fillColor="#7A1C6542" android:pathData="M27,22.5h4v39h-4z" />
+            <path android:fillColor="#FFFFFDF8" android:pathData="M36,32h10a2,2 0 0 1 2,2v6a2,2 0 0 1 -2,2h-10a2,2 0 0 1 -2,-2v-6a2,2 0 0 1 2,-2z" />
+        </group>
+        <!-- peach book -->
+        <group android:rotation="8" android:pivotX="62" android:pivotY="56">
+            <path android:fillColor="#F2A780" android:pathData="M53,19h20a6,6 0 0 1 6,6v32a6,6 0 0 1 -6,6h-20a6,6 0 0 1 -6,-6v-32a6,6 0 0 1 6,-6z" />
+            <path android:fillColor="#FFC9A9" android:pathData="M53,16h20a6,6 0 0 1 6,6v32a6,6 0 0 1 -6,6h-20a6,6 0 0 1 -6,-6v-32a6,6 0 0 1 6,-6z" />
+            <path android:fillColor="#668F3D10" android:pathData="M53,16.2h4v43.6h-4z" />
+            <path android:fillColor="#FFFFFDF8" android:pathData="M62,26h11a2,2 0 0 1 2,2v6a2,2 0 0 1 -2,2h-11a2,2 0 0 1 -2,-2v-6a2,2 0 0 1 2,-2z" />
+        </group>
+        <!-- nest bowl -->
+        <path android:fillColor="#F3C58E" android:pathData="M8,58C8,82 28,92 50,92C72,92 92,82 92,58C70,66 30,66 8,58z" />
+        <path android:strokeColor="#BFC98A4E" android:strokeWidth="3.2" android:strokeLineCap="round" android:pathData="M16,70Q50,80 84,70" />
+        <path android:strokeColor="#BFC98A4E" android:strokeWidth="3.2" android:strokeLineCap="round" android:pathData="M22,78Q50,88 78,78" />
+        <path android:strokeColor="#BFC98A4E" android:strokeWidth="3.2" android:strokeLineCap="round" android:pathData="M30,86Q50,93 70,86" />
+        <!-- rim -->
+        <path android:strokeColor="#F3C58E" android:strokeWidth="10" android:strokeLineCap="round" android:pathData="M8,58C30,68 70,68 92,58" />
+        <path android:strokeColor="#99C98A4E" android:strokeWidth="2.6" android:strokeLineCap="round" android:pathData="M14,61L20,62.6M28,64.4L35,65.4M43,66L50,66.2M57,66L64,65.6M72,64.4L79,62.8M86,61L89,59.8" />
+        <!-- sparkle -->
+        <path android:fillColor="#FFE59A" android:pathData="M94,26Q95.3,32.7 102,34Q95.3,35.3 94,42Q92.7,35.3 86,34Q92.7,32.7 94,26z" />
+    </group>
 </vector>

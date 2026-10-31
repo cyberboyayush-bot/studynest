@@ -1,3 +1,67 @@
 <resources>
     <string name="app_name">StudyNest</string>
+
+    <!-- Common -->
+    <string name="action_cancel">Cancel</string>
+    <string name="action_try_again">Try again</string>
+    <string name="action_back">Back</string>
+    <string name="action_close">Close</string>
+    <string name="loading">Loading</string>
+    <string name="error_title">That didn\'t load</string>
+
+    <!-- Priority -->
+    <string name="priority_low">Low</string>
+    <string name="priority_medium">Medium</string>
+    <string name="priority_high">High</string>
+    <string name="priority_low_description">Low priority</string>
+    <string name="priority_medium_description">Medium priority</string>
+    <string name="priority_high_description">High priority</string>
+
+    <!-- Welcome -->
+    <string name="welcome_kicker">Your cosy study corner</string>
+    <string name="welcome_headline_1">Settle in.</string>
+    <string name="welcome_headline_2">Get it done.</string>
+    <string name="welcome_body">Plan assignments, focus in calm timed sessions and watch your week come together.</string>
+    <string name="welcome_get_started">Get started</string>
+    <string name="welcome_sign_in">I already have an account</string>
+    <string name="welcome_illustration">A cosy nest holding a stack of books, a pencil and a little alarm clock</string>
+
+    <!-- Auth -->
+    <string name="auth_sign_up_title">Make your nest</string>
+    <string name="auth_sign_up_subtitle">Takes less than a minute. Your plans sync wherever you sign in.</string>
+    <string name="auth_sign_in_title">Welcome back</string>
+    <string name="auth_sign_in_subtitle">Sign in to pick up right where you left off.</string>
+    <string name="auth_name">Name</string>
+    <string name="auth_name_placeholder">What should we call you?</string>
+    <string name="auth_email">Email</string>
+    <string name="auth_email_placeholder">you@college.edu</string>
+    <string name="auth_password">Password</string>
+    <string name="auth_password_placeholder_new">At least 8 characters</string>
+    <string name="auth_password_placeholder">Your password</string>
+    <string name="auth_show_password">Show password</string>
+    <string name="auth_hide_password">Hide password</string>
+    <string name="auth_sign_up_submit">Create account</string>
+    <string name="auth_sign_in_submit">Sign in</string>
+    <string name="auth_have_account">Already have an account?</string>
+    <string name="auth_no_account">New to StudyNest?</string>
+    <string name="auth_switch_to_sign_in">Sign in</string>
+    <string name="auth_switch_to_sign_up">Create an account</string>
+    <string name="auth_strength_label">Strength</string>
+    <string name="auth_strength_too_short">Too short</string>
+    <string name="auth_strength_weak">Weak</string>
+    <string name="auth_strength_fair">Fair</string>
+    <string name="auth_strength_good">Good</string>
+    <string name="auth_strength_strong">Strong</string>
+    <string name="auth_strength_description">Password strength: %1$s</string>
+    <string name="auth_strength_hint">Mix letters, numbers and a symbol for a stronger password.</string>
+
+    <!-- Main shell -->
+    <string name="tab_today">Today</string>
+    <string name="tab_assignments">Tasks</string>
+    <string name="tab_focus">Focus</string>
+    <string name="tab_insights">Insights</string>
+    <string name="tab_profile">Profile</string>
+    <string name="tab_focus_running">Focus, session in progress</string>
+    <string name="tab_focus_paused">Focus, session paused</string>
+    <string name="placeholder_coming_soon">This corner of the nest is still being built.</string>
 </resources>

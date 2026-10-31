@@ -1,3 +1,5 @@
 <resources>
-    <color name="splash_background">#FF1C1530</color>
+    <!-- Deep plum canvas (matches the Compose dark background) -->
+    <color name="splash_background">#FF1B1430</color>
+    <color name="launcher_background">#FF5B4FD6</color>
 </resources>

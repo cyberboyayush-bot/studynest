@@ -1,10 +1,12 @@
 package me.aysh.studynest.ui.navigation
 
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.NavKey
@@ -12,6 +14,8 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import me.aysh.studynest.ui.auth.AuthMode
 import me.aysh.studynest.ui.auth.AuthScreen
 import me.aysh.studynest.ui.auth.WelcomeScreen
@@ -20,10 +24,20 @@ import me.aysh.studynest.ui.main.MainScreen
 import me.aysh.studynest.ui.subjects.SubjectsScreen
 
 /**
- * One snackbar host for the signed-in app, so a message raised by a screen that is closing
- * (e.g. "Assignment added" from the editor) still shows on the screen underneath.
+ * One snackbar host for the whole app. Screens render a `SnackbarHost(messenger.host)`; a message posted by a
+ * screen that is closing (e.g. "Assignment added" from the editor) still shows on the screen underneath,
+ * because [show] runs in a scope that outlives individual screens.
  */
-val LocalAppSnackbar = staticCompositionLocalOf<SnackbarHostState> { error("No snackbar host provided") }
+class AppMessenger(val host: SnackbarHostState, private val scope: CoroutineScope) {
+    fun show(message: String) {
+        scope.launch {
+            host.currentSnackbarData?.dismiss()
+            host.showSnackbar(message, withDismissAction = false, duration = SnackbarDuration.Short)
+        }
+    }
+}
+
+val LocalAppMessenger = staticCompositionLocalOf<AppMessenger> { error("No AppMessenger provided") }
 
 /**
  * Root navigation. The back stack is reset whenever the user signs in or out, so the
@@ -33,7 +47,8 @@ val LocalAppSnackbar = staticCompositionLocalOf<SnackbarHostState> { error("No s
 fun AppNavigation(signedIn: Boolean) {
     val root: NavKey = if (signedIn) Main else Welcome
     val backStack = rememberNavBackStack(root)
-    val snackbar = remember { SnackbarHostState() }
+    val messageScope = rememberCoroutineScope()
+    val messenger = remember { AppMessenger(SnackbarHostState(), messageScope) }
 
     LaunchedEffect(signedIn) {
         if (backStack.firstOrNull() != root) {
@@ -42,7 +57,7 @@ fun AppNavigation(signedIn: Boolean) {
         }
     }
 
-    CompositionLocalProvider(LocalAppSnackbar provides snackbar) {
+    CompositionLocalProvider(LocalAppMessenger provides messenger) {
         NavDisplay(
             backStack = backStack,
             onBack = { if (backStack.size > 1) backStack.removeAt(backStack.lastIndex) },

@@ -1,4 +1,6 @@
 <resources>
+    <!-- Cream canvas (matches the Compose light background) -->
     <color name="splash_background">#FFFFF8EE</color>
-    <color name="launcher_background">#FFB9B4F5</color>
+    <!-- Lilac behind the nest mark: adaptive icon background + splash icon disc -->
+    <color name="launcher_background">#FF8577F2</color>
 </resources>
