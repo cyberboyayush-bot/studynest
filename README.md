@@ -5,9 +5,28 @@
 A cosy study planner for Android, built for the Mobile Application Development course. Keep your subjects and
 assignments in one place, run timed focus sessions, and watch your week come together.
 
-<!-- SCREENSHOTS -->
+<p>
+  <img src="artifacts/screenshots/02-welcome.png" width="200" alt="Welcome">
+  <img src="artifacts/screenshots/06-signup-strength.png" width="200" alt="Sign up">
+  <img src="artifacts/screenshots/28-today.png" width="200" alt="Today">
+  <img src="artifacts/screenshots/30-assignments.png" width="200" alt="Assignments">
+</p>
+<p>
+  <img src="artifacts/screenshots/39-focus-timer.png" width="200" alt="Focus timer">
+  <img src="artifacts/screenshots/43-insights-bottom.png" width="200" alt="Insights">
+  <img src="artifacts/screenshots/35-subjects.png" width="200" alt="Subjects">
+  <img src="artifacts/screenshots/14-editor-new.png" width="200" alt="Assignment editor">
+</p>
+<p>
+  <img src="artifacts/screenshots/47-today-dark.png" width="200" alt="Today, dark">
+  <img src="artifacts/screenshots/48-assignments-dark.png" width="200" alt="Assignments, dark">
+  <img src="artifacts/screenshots/51-focus-dark.png" width="200" alt="Focus, dark">
+  <img src="artifacts/screenshots/53-insights-charts-dark.png" width="200" alt="Insights, dark">
+</p>
 
-**Demo video:** [`artifacts/studynest-demo-2x.mp4`](artifacts/studynest-demo-2x.mp4) (2× speed) · full speed:
+All 53 screenshots (light and dark, every screen and state) are in [`artifacts/screenshots/`](artifacts/screenshots/), captured by the end-to-end run.
+
+**Demo video:** [`artifacts/studynest-demo-2x.mp4`](artifacts/studynest-demo-2x.mp4) (2× speed, ~10 min) · full speed (~20 min):
 [`artifacts/studynest-demo.mp4`](artifacts/studynest-demo.mp4) — recorded on the release build by `scripts/record.sh`.
 **Installable APK:** [`artifacts/StudyNest.apk`](artifacts/StudyNest.apk)
 

@@ -394,8 +394,12 @@ row = wait_for(prefix="assignment_row_")
 x1, y1, x2, y2 = bounds(row)
 w, _ = screen_size()
 swipe(int(w * 0.12), (y1 + y2) // 2, int(w * 0.9), (y1 + y2) // 2, 600)
-undo = wait_for(tag="snackbar_action", timeout=8)
-root = dump()
+undo, root = None, None
+for _ in range(6):
+    root = dump()
+    undo = find(tag="snackbar_action", root=root)
+    if undo is not None:
+        break
 check("Swipe shows an Undo snackbar", undo is not None)
 check("Row leaves the open list", find(prefix="assignment_row_", root=root) is None)
 shot("assignments-done-undo")
