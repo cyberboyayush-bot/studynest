@@ -1,0 +1,122 @@
+package me.aysh.studynest.data.repository
+
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.serialization.json.Json
+import me.aysh.studynest.data.model.Assignment
+import me.aysh.studynest.data.model.AssignmentDraft
+import me.aysh.studynest.data.model.AssignmentStatus
+import me.aysh.studynest.data.model.FocusSession
+import me.aysh.studynest.data.model.Profile
+import me.aysh.studynest.data.model.Subject
+import me.aysh.studynest.data.model.SubjectDraft
+import me.aysh.studynest.data.model.WeekInsights
+import me.aysh.studynest.data.remote.CompletionRequest
+import me.aysh.studynest.data.remote.FocusSessionRequest
+import me.aysh.studynest.data.remote.StudyNestApi
+import me.aysh.studynest.data.remote.UpdateProfileRequest
+import me.aysh.studynest.data.remote.apiCall
+import me.aysh.studynest.data.remote.requireSuccess
+import me.aysh.studynest.data.remote.toModel
+import me.aysh.studynest.data.remote.toRequest
+import java.time.Clock
+import java.time.Instant
+import java.time.LocalDate
+
+/**
+ * Single entry point for study data. Every failure surfaces as an AppException.
+ * [revision] increments after every successful write so screens know to reload.
+ */
+class StudyRepository(
+    private val api: StudyNestApi,
+    private val json: Json,
+    private val clock: Clock,
+) {
+
+    private val _revision = MutableStateFlow(0)
+    val revision: StateFlow<Int> = _revision.asStateFlow()
+
+    private fun bump() = _revision.update { it + 1 }
+
+    fun today(): LocalDate = LocalDate.now(clock)
+
+    // Subjects
+
+    suspend fun subjects(): List<Subject> = apiCall(json) { api.subjects().subjects.map { it.toModel() } }
+
+    suspend fun addSubject(draft: SubjectDraft): Subject =
+        apiCall(json) { api.createSubject(draft.toRequest()).subject.toModel() }.also { bump() }
+
+    suspend fun updateSubject(id: String, draft: SubjectDraft): Subject =
+        apiCall(json) { api.updateSubject(id, draft.toRequest()).subject.toModel() }.also { bump() }
+
+    suspend fun deleteSubject(id: String) {
+        apiCall(json) { api.deleteSubject(id).requireSuccess(json) }
+        bump()
+    }
+
+    // Assignments
+
+    suspend fun assignments(
+        subjectId: String? = null,
+        status: AssignmentStatus = AssignmentStatus.All,
+        query: String? = null,
+    ): List<Assignment> = apiCall(json) {
+        api.assignments(
+            subjectId = subjectId,
+            status = status.key,
+            query = query?.trim()?.takeIf { it.isNotEmpty() },
+        ).assignments.map { it.toModel() }
+    }
+
+    suspend fun assignment(id: String): Assignment = apiCall(json) { api.assignment(id).assignment.toModel() }
+
+    suspend fun addAssignment(draft: AssignmentDraft): Assignment =
+        apiCall(json) { api.createAssignment(draft.toRequest()).assignment.toModel() }.also { bump() }
+
+    suspend fun updateAssignment(id: String, draft: AssignmentDraft): Assignment =
+        apiCall(json) { api.updateAssignment(id, draft.toRequest()).assignment.toModel() }.also { bump() }
+
+    /** Marks done on the student's local date, or reopens when [done] is false. */
+    suspend fun setDone(id: String, done: Boolean): Assignment =
+        apiCall(json) {
+            api.setCompletion(id, CompletionRequest.of(if (done) today().toString() else null)).assignment.toModel()
+        }.also { bump() }
+
+    suspend fun deleteAssignment(id: String) {
+        apiCall(json) { api.deleteAssignment(id).requireSuccess(json) }
+        bump()
+    }
+
+    // Focus
+
+    suspend fun focusSessions(weekStart: LocalDate): List<FocusSession> =
+        apiCall(json) { api.focusSessions(weekStart.toString()).sessions.map { it.toModel() } }
+
+    suspend fun logFocusSession(subjectId: String?, startedAt: Instant, durationSeconds: Int): FocusSession =
+        apiCall(json) {
+            api.createFocusSession(
+                FocusSessionRequest(
+                    subjectId = subjectId,
+                    startedAt = startedAt.toString(),
+                    durationSeconds = durationSeconds,
+                    day = startedAt.atZone(clock.zone).toLocalDate().toString(),
+                ),
+            ).session.toModel()
+        }.also { bump() }
+
+    suspend fun insights(weekStart: LocalDate): WeekInsights =
+        apiCall(json) { api.insights(weekStart.toString(), today().toString()).toModel() }
+
+    // Profile
+
+    suspend fun profile(): Profile = apiCall(json) { api.profile().profile.toModel() }
+
+    suspend fun updateProfile(name: String? = null, dailyGoalMinutes: Int? = null): Profile =
+        apiCall(json) {
+            api.updateProfile(UpdateProfileRequest(name = name?.trim(), dailyFocusGoalMinutes = dailyGoalMinutes))
+                .profile.toModel()
+        }.also { bump() }
+}
