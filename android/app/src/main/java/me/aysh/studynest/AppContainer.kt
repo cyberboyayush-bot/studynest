@@ -16,6 +16,9 @@ import me.aysh.studynest.data.repository.TokenStore
 import me.aysh.studynest.data.session.SessionState
 import me.aysh.studynest.data.session.SessionStore
 import me.aysh.studynest.data.session.TokenCipher
+import me.aysh.studynest.data.remote.AppException
+import java.io.IOException
+import java.security.GeneralSecurityException
 import java.time.Clock
 
 /** Manual dependency container: one instance of each shared object for the whole app. */
@@ -31,24 +34,35 @@ class AppContainer(context: Context) {
     private val api = createApi(
         baseUrl = BuildConfig.API_BASE_URL,
         tokenProvider = { sessionStore.currentToken },
-        onUnauthorized = { token -> appScope.launch { sessionStore.clearIfCurrent(token) } },
+        onUnauthorized = { token -> appScope.launch { runCatching { sessionStore.clearIfCurrent(token) } } },
     )
 
     val authRepository = AuthRepository(
         api = api,
         tokens = object : TokenStore {
-            override suspend fun save(token: String) = sessionStore.save(token)
-            override suspend fun clear() = sessionStore.clear()
+            override suspend fun save(token: String) = deviceStorage { sessionStore.save(token) }
+            override suspend fun clear() = deviceStorage { sessionStore.clear() }
         },
         json = AppJson,
     )
 
     val studyRepository = StudyRepository(api, AppJson, clock)
 
+    /** Local storage or Keystore failures surface as a friendly [AppException] instead of crashing a ViewModel. */
+    private suspend fun deviceStorage(block: suspend () -> Unit) {
+        try {
+            block()
+        } catch (e: IOException) {
+            throw AppException("Couldn't update your session on this device. Please try again.", AppException.Kind.Unexpected, cause = e)
+        } catch (e: GeneralSecurityException) {
+            throw AppException("Couldn't secure your session on this device. Please try again.", AppException.Kind.Unexpected, cause = e)
+        }
+    }
+
     val focusTimer = FocusTimer(
         scope = mainScope,
         store = DataStoreFocusRunStore(context, AppJson),
-        logger = { subjectId, startedAt, seconds -> studyRepository.logFocusSession(subjectId, startedAt, seconds) },
+        logger = { id, subjectId, startedAt, seconds -> studyRepository.logFocusSession(id, subjectId, startedAt, seconds) },
         elapsedRealtime = SystemClock::elapsedRealtime,
         clock = clock,
     )

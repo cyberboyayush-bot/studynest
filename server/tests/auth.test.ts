@@ -48,6 +48,24 @@ describe("auth", () => {
     expect(res.status).toBe(400);
   });
 
+  test.each([
+    ["blank", ""],
+    ["too long", "x".repeat(61)],
+    ["not a string", 42],
+  ])("update-user rejects a %s name", async (_, name) => {
+    const { token } = await signUp();
+    const res = await call("POST", "/api/auth/update-user", { token, body: { name } });
+    expect(res.status).toBe(400);
+    expect((await call("GET", "/api/me", { token })).json.profile.name).toBe("Ayush");
+  });
+
+  test("update-user trims a valid name", async () => {
+    const { token } = await signUp();
+    const res = await call("POST", "/api/auth/update-user", { token, body: { name: "  Maya  " } });
+    expect(res.status).toBe(200);
+    expect((await call("GET", "/api/me", { token })).json.profile.name).toBe("Maya");
+  });
+
   test("sign up trims the name", async () => {
     const { user } = await signUp({ name: "  Ayush  " });
     expect(user.name).toBe("Ayush");

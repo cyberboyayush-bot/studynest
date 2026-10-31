@@ -106,7 +106,14 @@ class ProfileViewModel(
     fun signOut() {
         if (_state.value.isSigningOut) return
         _state.update { it.copy(isSigningOut = true) }
-        viewModelScope.launch { auth.signOut() }
+        viewModelScope.launch {
+            try {
+                auth.signOut()
+            } catch (e: AppException) {
+                _state.update { it.copy(isSigningOut = false, confirmSignOut = false) }
+                _messages.send(e.message)
+            }
+        }
     }
 
     private fun updateSheet(transform: (GoalSheetState) -> GoalSheetState) =

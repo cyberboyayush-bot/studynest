@@ -12,6 +12,7 @@ import me.aysh.studynest.data.model.SubjectRef
 import me.aysh.studynest.data.remote.AppException
 import java.time.Clock
 import java.time.Instant
+import java.util.UUID
 
 /**
  * One focus run. Time is derived from timestamps, never from counting ticks, so the timer stays
@@ -26,25 +27,51 @@ data class FocusRun(
     val accumulatedMillis: Long,
     /** Monotonic time ([FocusTimer.elapsedRealtime]) when the current stretch began; null while paused. */
     val resumedAtElapsed: Long?,
-    /** Wall-clock twin of [resumedAtElapsed], used only if the monotonic clock reset (device reboot). */
+    /** Wall-clock twin of [resumedAtElapsed], used when the monotonic clock was reset (device reboot). */
     val resumedAtWallMillis: Long?,
 ) {
     val isPaused: Boolean get() = resumedAtElapsed == null
 
     fun elapsedMillis(nowElapsed: Long, nowWallMillis: Long): Long {
-        val stretch = when {
-            resumedAtElapsed == null -> 0L
-            nowElapsed >= resumedAtElapsed -> nowElapsed - resumedAtElapsed
-            else -> (nowWallMillis - (resumedAtWallMillis ?: nowWallMillis)).coerceAtLeast(0L)
+        val stretch = if (resumedAtElapsed == null) {
+            0L
+        } else {
+            val monotonic = nowElapsed - resumedAtElapsed
+            val wall = resumedAtWallMillis?.let { nowWallMillis - it }
+            // elapsedRealtime keeps counting through deep sleep, so the two only disagree when the device
+            // rebooted (monotonic clock restarted from zero); then the wall clock is the better witness.
+            if (wall != null && (monotonic < 0 || wall - monotonic > REBOOT_TOLERANCE_MILLIS)) {
+                wall.coerceAtLeast(0L)
+            } else {
+                monotonic.coerceAtLeast(0L)
+            }
         }
         return (accumulatedMillis + stretch).coerceAtMost(plannedMillis)
     }
+
+    private companion object {
+        const val REBOOT_TOLERANCE_MILLIS = 60_000L
+    }
 }
 
-/** Where an in-progress run is kept so it survives process death. */
+/**
+ * A finished session that still has to reach the server. [id] is generated on the device so a retry
+ * after a lost response (or after process death) can't record the session twice.
+ */
+data class PendingFocusSave(
+    val id: String,
+    val subject: SubjectRef?,
+    val startedAt: Instant,
+    val seconds: Int,
+    val completed: Boolean,
+)
+
+/** Where an in-progress run and an unsent result are kept so they survive process death. */
 interface FocusRunStore {
     suspend fun load(): FocusRun?
     suspend fun save(run: FocusRun?)
+    suspend fun loadPending(): PendingFocusSave?
+    suspend fun savePending(pending: PendingFocusSave?)
 }
 
 sealed interface FocusTimerState {
@@ -74,7 +101,7 @@ sealed interface FocusTimerState {
 
 /** Records a finished session; returns normally on success or throws [AppException]. */
 fun interface FocusSessionLogger {
-    suspend fun log(subjectId: String?, startedAt: Instant, durationSeconds: Int)
+    suspend fun log(id: String, subjectId: String?, startedAt: Instant, durationSeconds: Int)
 }
 
 /**
@@ -86,15 +113,15 @@ class FocusTimer(
     private val logger: FocusSessionLogger,
     private val elapsedRealtime: () -> Long,
     private val clock: Clock,
+    private val newId: () -> String = { UUID.randomUUID().toString() },
 ) {
 
     private val _state = MutableStateFlow<FocusTimerState>(FocusTimerState.Idle)
     val state: StateFlow<FocusTimerState> = _state.asStateFlow()
 
     private var ticker: Job? = null
-    private var pendingSave: PendingSave? = null
-
-    private data class PendingSave(val subject: SubjectRef?, val startedAt: Instant, val seconds: Int, val completed: Boolean)
+    private var upload: Job? = null
+    private var pendingSave: PendingFocusSave? = null
 
     private var persistJob: Job? = null
 
@@ -104,10 +131,16 @@ class FocusTimer(
         val previous = persistJob
         scope.launch {
             previous?.join()
-            val restored = runCatching { store.load() }.getOrNull() ?: return@launch
-            if (_state.value is FocusTimerState.Idle) {
-                publish(restored)
-                if (!restored.isPaused) startTicker()
+            val pending = runCatching { store.loadPending() }.getOrNull()
+            val restored = runCatching { store.load() }.getOrNull()
+            if (_state.value !is FocusTimerState.Idle) return@launch
+            when {
+                // A result that never reached the server: try again now.
+                pending != null -> save(pending)
+                restored != null -> {
+                    publish(restored)
+                    if (!restored.isPaused) startTicker()
+                }
             }
         }
     }
@@ -122,7 +155,11 @@ class FocusTimer(
             resumedAtElapsed = elapsedRealtime(),
             resumedAtWallMillis = clock.millis(),
         )
-        pendingSave = null
+        // Starting over means the student chose not to retry an unsent result.
+        if (pendingSave != null) {
+            pendingSave = null
+            persistPending(null)
+        }
         update(run)
         startTicker()
     }
@@ -151,7 +188,7 @@ class FocusTimer(
             _state.value = FocusTimerState.Finished(active.run.subject, seconds, completed = false, saved = false, tooShort = true)
             return
         }
-        save(PendingSave(active.run.subject, active.run.startedAt, seconds, completed = false))
+        save(PendingFocusSave(newId(), active.run.subject, active.run.startedAt, seconds, completed = false))
     }
 
     fun retrySave() {
@@ -160,19 +197,22 @@ class FocusTimer(
         save(pending)
     }
 
-    /** Clears a finished run so a new one can start. */
+    /** Clears a finished run so a new one can start. Dismissing an unsaved result discards it. */
     fun dismiss() {
         if (_state.value is FocusTimerState.Finished) {
             pendingSave = null
+            persistPending(null)
             _state.value = FocusTimerState.Idle
         }
     }
 
-    /** Forgets everything, e.g. on sign-out. */
+    /** Forgets everything, e.g. on sign-out. An upload still in flight can no longer change the state. */
     fun reset() {
         ticker?.cancel()
+        upload?.cancel()
         pendingSave = null
         persist(null)
+        persistPending(null)
         _state.value = FocusTimerState.Idle
     }
 
@@ -184,7 +224,15 @@ class FocusTimer(
                 if (active.isPaused) break
                 val elapsed = elapsedNow(active.run)
                 if (elapsed >= active.run.plannedMillis) {
-                    save(PendingSave(active.run.subject, active.run.startedAt, (active.run.plannedMillis / 1000).toInt(), completed = true))
+                    save(
+                        PendingFocusSave(
+                            newId(),
+                            active.run.subject,
+                            active.run.startedAt,
+                            (active.run.plannedMillis / 1000).toInt(),
+                            completed = true,
+                        ),
+                    )
                     break
                 }
                 _state.value = active.copy(elapsedMillis = elapsed)
@@ -193,14 +241,18 @@ class FocusTimer(
         }
     }
 
-    private fun save(pending: PendingSave) {
+    /** The result is written to disk before the upload starts and removed only once the server has it. */
+    private fun save(pending: PendingFocusSave) {
         pendingSave = pending
         persist(null)
+        persistPending(pending)
         _state.value = FocusTimerState.Saving(pending.subject, pending.seconds)
-        scope.launch {
+        upload?.cancel()
+        upload = scope.launch {
             _state.value = try {
-                logger.log(pending.subject?.id, pending.startedAt, pending.seconds)
+                logger.log(pending.id, pending.subject?.id, pending.startedAt, pending.seconds)
                 pendingSave = null
+                persistPending(null)
                 FocusTimerState.Finished(pending.subject, pending.seconds, pending.completed, saved = true)
             } catch (e: AppException) {
                 FocusTimerState.Finished(pending.subject, pending.seconds, pending.completed, saved = false, error = e.message)
@@ -217,12 +269,16 @@ class FocusTimer(
         _state.value = FocusTimerState.Active(run, elapsedNow(run))
     }
 
-    /** Writes are chained so they land in call order; a stale run can never overwrite a newer one. */
-    private fun persist(run: FocusRun?) {
+    /** Writes are chained so they land in call order; a stale value can never overwrite a newer one. */
+    private fun persist(run: FocusRun?) = chainWrite { store.save(run) }
+
+    private fun persistPending(pending: PendingFocusSave?) = chainWrite { store.savePending(pending) }
+
+    private fun chainWrite(write: suspend () -> Unit) {
         val previous = persistJob
         persistJob = scope.launch {
             previous?.join()
-            runCatching { store.save(run) }
+            runCatching { write() }
         }
     }
 

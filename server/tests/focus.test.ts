@@ -27,6 +27,29 @@ describe("focus sessions", () => {
     expect(otherWeek.json.sessions).toHaveLength(0);
   });
 
+  test("retrying with the same client id records the session once", async () => {
+    const { token } = await signUp();
+    const id = crypto.randomUUID();
+    const first = await call("POST", "/api/focus-sessions", { token, body: sessionBody({ id }) });
+    expect(first.status).toBe(201);
+    expect(first.json.session.id).toBe(id);
+    const retry = await call("POST", "/api/focus-sessions", { token, body: sessionBody({ id }) });
+    expect(retry.status).toBe(200);
+    expect(retry.json.session.id).toBe(id);
+    const list = await call("GET", `/api/focus-sessions?week=${WEEK}`, { token });
+    expect(list.json.sessions).toHaveLength(1);
+  });
+
+  test("another user's session id can't be reused or read", async () => {
+    const alice = await signUp();
+    const bob = await signUp();
+    const id = crypto.randomUUID();
+    await call("POST", "/api/focus-sessions", { token: alice.token, body: sessionBody({ id }) });
+    const res = await call("POST", "/api/focus-sessions", { token: bob.token, body: sessionBody({ id }) });
+    expect(res.status).toBe(409);
+    expect(res.json.session).toBeUndefined();
+  });
+
   test("a session without a subject is allowed", async () => {
     const { token } = await signUp();
     const res = await call("POST", "/api/focus-sessions", { token, body: sessionBody({ subjectId: null }) });

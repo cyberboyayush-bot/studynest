@@ -1,5 +1,7 @@
 package me.aysh.studynest.data.repository
 
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import me.aysh.studynest.data.remote.AppException
 import me.aysh.studynest.data.remote.StudyNestApi
@@ -42,7 +44,8 @@ class AuthRepository(
         } catch (_: AppException) {
             // Offline or already expired: clearing locally is still the right outcome.
         } finally {
-            tokens.clear()
+            // Must happen even if the caller's scope is cancelled mid-request, or the token would linger.
+            withContext(NonCancellable) { tokens.clear() }
         }
     }
 

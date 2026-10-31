@@ -10,6 +10,14 @@ import { env } from "./env";
 /** Set only by our own Hono handler from the socket address; any client-supplied value is dropped. */
 export const CLIENT_IP_HEADER = "x-studynest-client-ip";
 
+function validName(value: unknown): string {
+  const name = typeof value === "string" ? value.trim() : "";
+  if (name.length === 0 || name.length > 60) {
+    throw new APIError("BAD_REQUEST", { message: "Name must be between 1 and 60 characters" });
+  }
+  return name;
+}
+
 export const auth = betterAuth({
   appName: "StudyNest",
   baseURL: env.BETTER_AUTH_URL,
@@ -53,13 +61,11 @@ export const auth = betterAuth({
   databaseHooks: {
     user: {
       create: {
-        before: async (data) => {
-          const name = typeof data.name === "string" ? data.name.trim() : "";
-          if (name.length === 0 || name.length > 60) {
-            throw new APIError("BAD_REQUEST", { message: "Name must be between 1 and 60 characters" });
-          }
-          return { data: { ...data, name } };
-        },
+        before: async (data) => ({ data: { ...data, name: validName(data.name) } }),
+      },
+      // Better Auth's own /update-user endpoint must follow the same name rule as PATCH /api/me.
+      update: {
+        before: async (data) => ({ data: data.name === undefined ? data : { ...data, name: validName(data.name) } }),
       },
     },
   },

@@ -1,13 +1,15 @@
 package me.aysh.studynest.data.session
 
 import android.content.Context
+import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.retryWhen
 import kotlinx.coroutines.withContext
 import java.io.IOException
 import kotlinx.coroutines.flow.SharingStarted
@@ -15,7 +17,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
-private val Context.sessionDataStore by preferencesDataStore(name = "session")
+private val Context.sessionDataStore by preferencesDataStore(
+    name = "session",
+    // A corrupt file can't hold a usable session: start over signed out instead of crashing.
+    corruptionHandler = ReplaceFileCorruptionHandler { emptyPreferences() },
+)
 
 sealed interface SessionState {
     data object Loading : SessionState
@@ -29,8 +35,14 @@ class SessionStore(context: Context, private val cipher: TokenCipher, scope: Cor
     private val dataStore = context.applicationContext.sessionDataStore
 
     val state: StateFlow<SessionState> = dataStore.data
-        // An unreadable file means there is no usable session; don't leave the splash stuck.
-        .catch { if (it is IOException) emit(emptyPreferences()) else throw it }
+        // An unreadable file means there is no usable session: report signed out (so the splash never hangs),
+        // then keep listening so a later successful sign-in is still picked up.
+        .retryWhen { cause, attempt ->
+            if (cause !is IOException) return@retryWhen false
+            emit(emptyPreferences())
+            delay(minOf(1_000L * (attempt + 1), 10_000L))
+            true
+        }
         .map { prefs ->
             prefs[TOKEN_KEY]?.let(cipher::decrypt)?.let { SessionState.SignedIn(it) } ?: SessionState.SignedOut
         }

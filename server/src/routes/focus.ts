@@ -58,14 +58,25 @@ export const focusRoutes = new Hono<AppEnv>()
       const [row] = await db
         .insert(focusSession)
         .values({
+          ...(input.id ? { id: input.id } : {}),
           userId,
           subjectId: owner?.id ?? null,
           startedAt,
           durationSeconds: input.durationSeconds,
           day: input.day,
         })
+        .onConflictDoNothing({ target: focusSession.id })
         .returning();
-      return c.json({ session: toDto(row!, owner) }, 201);
+      if (row) return c.json({ session: toDto(row, owner) }, 201);
+
+      // Same id again: a retry of an upload that already succeeded. Only the owner gets it back.
+      const [existing] = await db
+        .select({ session: focusSession, subject })
+        .from(focusSession)
+        .leftJoin(subject, eq(subject.id, focusSession.subjectId))
+        .where(and(eq(focusSession.id, input.id!), eq(focusSession.userId, userId)));
+      if (!existing) throw apiError(409, "conflict", "That session id is already taken");
+      return c.json({ session: toDto(existing.session, existing.subject) }, 200);
     } catch (error) {
       if (isForeignKeyViolation(error)) throw UNKNOWN_SUBJECT();
       throw error;

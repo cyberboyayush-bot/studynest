@@ -1,5 +1,6 @@
 package me.aysh.studynest.ui.editor
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
@@ -90,6 +91,10 @@ fun AssignmentEditorScreen(assignmentId: String?, presetSubjectId: String?, onCl
         }
     }
 
+    // Leaving mid-write would cancel the request after the server may already have applied it.
+    val busy = state.isSaving || state.isDeleting
+    BackHandler(enabled = busy) {}
+
     EditorContent(
         state = state,
         today = today,
@@ -168,6 +173,7 @@ private fun EditorContent(
                         icon = Icons.Rounded.Close,
                         contentDescription = stringResource(R.string.action_close),
                         onClick = onClose,
+                        enabled = !state.isSaving && !state.isDeleting,
                         modifier = Modifier.testTag("editor_close"),
                     )
                 },

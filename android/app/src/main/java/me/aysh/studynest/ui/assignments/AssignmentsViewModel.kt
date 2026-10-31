@@ -46,8 +46,13 @@ data class AssignmentsUiState(
     val isEmpty: Boolean get() = groups.valueOrNull?.isEmpty() == true
 }
 
-/** A row was swiped; the snackbar offers to undo it. */
-data class CompletionChange(val assignmentId: String, val title: String, val done: Boolean)
+/** A row was swiped; the snackbar offers to undo it. [previousCompletedOn] is what Undo restores. */
+data class CompletionChange(
+    val assignmentId: String,
+    val title: String,
+    val done: Boolean,
+    val previousCompletedOn: LocalDate?,
+)
 
 sealed interface AssignmentsEvent {
     data class Changed(val change: CompletionChange) : AssignmentsEvent
@@ -150,7 +155,9 @@ class AssignmentsViewModel(
         viewModelScope.launch {
             try {
                 repository.setDone(assignment.id, done)
-                _events.send(AssignmentsEvent.Changed(CompletionChange(assignment.id, assignment.title, done)))
+                _events.send(
+                    AssignmentsEvent.Changed(CompletionChange(assignment.id, assignment.title, done, assignment.completedOn)),
+                )
             } catch (e: AppException) {
                 if (hide) pendingIds.update { it - assignment.id }
                 _events.send(AssignmentsEvent.Message(e.message))
@@ -161,7 +168,7 @@ class AssignmentsViewModel(
     fun undo(change: CompletionChange) {
         viewModelScope.launch {
             try {
-                repository.setDone(change.assignmentId, !change.done)
+                repository.setCompletedOn(change.assignmentId, change.previousCompletedOn)
                 pendingIds.update { it - change.assignmentId }
             } catch (e: AppException) {
                 _events.send(AssignmentsEvent.Message(e.message))

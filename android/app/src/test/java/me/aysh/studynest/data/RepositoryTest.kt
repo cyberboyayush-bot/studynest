@@ -240,14 +240,19 @@ class RepositoryTest {
         assertEquals("PATCH", request.method)
         assertEquals("/api/assignments/a1", request.url.encodedPath)
         assertEquals("""{"completedOn":null}""", request.body!!.utf8())
+
+        json(200, """{"assignment":${assignmentJson("2026-10-02")}}""")
+        repo.setCompletedOn("a1", LocalDate.of(2026, 10, 2))
+        assertEquals("""{"completedOn":"2026-10-02"}""", server.takeRequest().body!!.utf8())
     }
 
     @Test
     fun `focus sessions record the local day of the start time`() = runTest {
         json(201, """{"session":{"id":"f1","subject":null,"startedAt":"2026-10-13T19:00:00Z","durationSeconds":1500,"day":"2026-10-14"}}""")
         // 19:00 UTC on the 13th is 00:30 on the 14th in Kolkata.
-        repo.logFocusSession(null, Instant.parse("2026-10-13T19:00:00Z"), 1500)
+        repo.logFocusSession("f1", null, Instant.parse("2026-10-13T19:00:00Z"), 1500)
         val body = server.takeRequest().body!!.utf8()
+        assertTrue(body, body.contains("\"id\":\"f1\""))
         assertTrue(body, body.contains("\"day\":\"2026-10-14\""))
         assertTrue(body, body.contains("\"durationSeconds\":1500"))
     }

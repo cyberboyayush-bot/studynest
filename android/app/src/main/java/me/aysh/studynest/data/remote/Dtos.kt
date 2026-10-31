@@ -81,6 +81,7 @@ data class FocusSessionDto(
 
 @Serializable
 data class FocusSessionRequest(
+    val id: String,
     val subjectId: String?,
     val startedAt: String,
     val durationSeconds: Int,

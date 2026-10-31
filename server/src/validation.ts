@@ -62,6 +62,8 @@ export const assignmentQuery = z.strictObject({
 const weekStart = isoDate.refine(isMonday, "Week must start on a Monday");
 
 export const focusInput = z.strictObject({
+  /** Optional client-generated id, so a retried upload of the same session is recorded only once. */
+  id: z.uuid().optional(),
   subjectId: z.uuid().nullable().optional(),
   startedAt: z.iso.datetime({ offset: true }),
   durationSeconds: z.int().min(MIN_SESSION_SECONDS).max(MAX_SESSION_SECONDS),
