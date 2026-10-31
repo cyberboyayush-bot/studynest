@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Strings for the planner screens: Today, Assignments, Subjects and the assignment editor. -->
+<resources>
+    <!-- Shared rows -->
+    <string name="planner_action_open">Open</string>
+    <string name="planner_row_done">Done</string>
+    <string name="planner_row_description">%1$s, %2$s, due %3$s</string>
+    <string name="planner_row_description_done">%1$s, %2$s, completed</string>
+    <string name="planner_row_overdue">Overdue</string>
+    <string name="planner_swipe_mark_done">Mark as done</string>
+    <string name="planner_swipe_reopen">Reopen</string>
+
+    <!-- Today -->
+    <string name="planner_greeting_morning">Good morning, %1$s</string>
+    <string name="planner_greeting_afternoon">Good afternoon, %1$s</string>
+    <string name="planner_greeting_evening">Good evening, %1$s</string>
+    <string name="planner_today_focus_title">Today\'s focus</string>
+    <string name="planner_today_goal_of">of %1$d min</string>
+    <string name="planner_today_goal_progress">%1$d of %2$d min</string>
+    <string name="planner_today_goal_description">%1$d of %2$d minutes focused today</string>
+    <string name="planner_today_goal_reached">Goal reached</string>
+    <string name="planner_today_goal_reached_body">Lovely work. Anything more is a bonus.</string>
+    <string name="planner_today_goal_none">A calm first session gets the ball rolling.</string>
+    <plurals name="planner_today_to_go">
+        <item quantity="one">%1$d min to go</item>
+        <item quantity="other">%1$d min to go</item>
+    </plurals>
+    <plurals name="planner_streak">
+        <item quantity="one">%1$d-day streak</item>
+        <item quantity="other">%1$d-day streak</item>
+    </plurals>
+    <string name="planner_streak_none">Start a streak today</string>
+    <string name="planner_start_focus">Start focus</string>
+    <string name="planner_session_running">Session in progress · %1$s</string>
+    <string name="planner_session_paused">Session paused · %1$s</string>
+    <string name="planner_session_saving">Saving your session…</string>
+    <string name="planner_session_finished">Session finished · see how it went</string>
+    <string name="planner_due_soon">Due soon</string>
+    <string name="planner_see_all">See all</string>
+    <plurals name="planner_overdue_count">
+        <item quantity="one">%1$d overdue</item>
+        <item quantity="other">%1$d overdue</item>
+    </plurals>
+    <string name="planner_due_soon_clear_title">Nothing due this week</string>
+    <string name="planner_due_soon_clear_body">Your week is wide open. Plan ahead or enjoy the calm.</string>
+    <string name="planner_subjects_title">Subjects</string>
+    <plurals name="planner_subject_count">
+        <item quantity="one">%1$d subject</item>
+        <item quantity="other">%1$d subjects</item>
+    </plurals>
+    <plurals name="planner_open_count">
+        <item quantity="one">%1$d open</item>
+        <item quantity="other">%1$d open</item>
+    </plurals>
+    <string name="planner_quick_add">New assignment</string>
+    <string name="planner_quick_add_body">Jot it down</string>
+    <string name="planner_today_empty_title">Let\'s build your nest</string>
+    <string name="planner_today_empty_body">Add the subjects you\'re taking, then drop in what\'s due. We\'ll keep it all cosy and in order.</string>
+    <string name="planner_today_empty_step_1">Add your subjects</string>
+    <string name="planner_today_empty_step_2">Plan what\'s due</string>
+    <string name="planner_today_empty_step_3">Focus in calm sessions</string>
+    <string name="planner_add_first_subject">Add your first subject</string>
+    <string name="planner_add_assignment">Add an assignment</string>
+    <string name="planner_refreshing">Refreshing</string>
+
+    <!-- Assignments -->
+    <string name="planner_assignments_title">Assignments</string>
+    <string name="planner_search_placeholder">Search assignments</string>
+    <string name="planner_search_clear">Clear search</string>
+    <string name="planner_filter_all">All</string>
+    <string name="planner_show_completed">Show completed</string>
+    <string name="planner_open_subjects">Manage subjects</string>
+    <string name="planner_new_assignment">New assignment</string>
+    <string name="planner_group_overdue">Overdue</string>
+    <string name="planner_group_today">Today</string>
+    <string name="planner_group_this_week">This week</string>
+    <string name="planner_group_later">Later</string>
+    <string name="planner_group_done">Done</string>
+    <string name="planner_marked_done">Marked \"%1$s\" as done</string>
+    <string name="planner_marked_open">Reopened \"%1$s\"</string>
+    <string name="planner_undo">Undo</string>
+    <string name="planner_assignments_empty_title">Nothing on your plate</string>
+    <string name="planner_assignments_empty_body">Add an assignment and it\'ll land here, sorted by when it\'s due.</string>
+    <string name="planner_assignments_empty_no_subjects">Start with a subject, then add what\'s due for it.</string>
+    <string name="planner_assignments_add_subject">Add a subject</string>
+    <string name="planner_assignments_no_matches_title">No matches</string>
+    <string name="planner_assignments_no_matches_body">Nothing fits those filters. Try a different word or subject.</string>
+    <string name="planner_clear_filters">Clear filters</string>
+    <string name="planner_swipe_hint">Swipe a row to tick it off</string>
+
+    <!-- Subjects -->
+    <string name="planner_subjects_screen_title">Subjects</string>
+    <string name="planner_subject_add">Add subject</string>
+    <string name="planner_subject_new_tile">New subject</string>
+    <string name="planner_subject_tile_description">%1$s, %2$s</string>
+    <string name="planner_subjects_empty_title">No subjects yet</string>
+    <string name="planner_subjects_empty_body">Subjects keep your assignments and focus time tidy. Add the ones you\'re taking this term.</string>
+    <string name="planner_subject_sheet_new">New subject</string>
+    <string name="planner_subject_sheet_edit">Edit subject</string>
+    <string name="planner_subject_name">Name</string>
+    <string name="planner_subject_name_placeholder">e.g. Physics</string>
+    <string name="planner_subject_preview_name">Your subject</string>
+    <string name="planner_subject_colour">Colour</string>
+    <string name="planner_subject_icon">Icon</string>
+    <string name="planner_subject_save_new">Add subject</string>
+    <string name="planner_subject_save_edit">Save changes</string>
+    <string name="planner_subject_delete">Delete</string>
+    <string name="planner_subject_add_assignment">Add assignment</string>
+    <string name="planner_subject_delete_title">Delete %1$s?</string>
+    <plurals name="planner_subject_delete_message">
+        <item quantity="one">Its %1$d assignment will be deleted too. Focus time stays in your insights.</item>
+        <item quantity="other">Its %1$d assignments will be deleted too. Focus time stays in your insights.</item>
+    </plurals>
+    <string name="planner_subject_delete_message_none">It has no assignments, so nothing else will be removed.</string>
+    <string name="planner_subject_delete_confirm">Delete</string>
+    <string name="planner_color_lilac">Lilac</string>
+    <string name="planner_color_peach">Peach</string>
+    <string name="planner_color_mint">Mint</string>
+    <string name="planner_color_butter">Butter</string>
+    <string name="planner_color_sky">Sky</string>
+    <string name="planner_color_rose">Rose</string>
+    <string name="planner_icon_book">Book</string>
+    <string name="planner_icon_calculator">Calculator</string>
+    <string name="planner_icon_flask">Flask</string>
+    <string name="planner_icon_globe">Globe</string>
+    <string name="planner_icon_palette">Palette</string>
+    <string name="planner_icon_code">Code</string>
+    <string name="planner_icon_music">Music</string>
+    <string name="planner_icon_language">Language</string>
+    <string name="planner_icon_history">History</string>
+    <string name="planner_icon_biology">Biology</string>
+
+    <!-- Editor -->
+    <string name="planner_editor_new">New assignment</string>
+    <string name="planner_editor_edit">Edit assignment</string>
+    <string name="planner_editor_delete">Delete assignment</string>
+    <string name="planner_editor_title">Title</string>
+    <string name="planner_editor_title_placeholder">What\'s due?</string>
+    <string name="planner_editor_subject">Subject</string>
+    <string name="planner_editor_needs_subject_title">Create a subject first</string>
+    <string name="planner_editor_needs_subject_body">Every assignment lives in a subject. Add one and come right back.</string>
+    <string name="planner_editor_add_subject">Add a subject</string>
+    <string name="planner_editor_due">Due date</string>
+    <string name="planner_editor_due_change">Change due date</string>
+    <string name="planner_editor_priority">Priority</string>
+    <string name="planner_editor_notes">Notes</string>
+    <string name="planner_editor_notes_placeholder">Pages to read, rubric links, anything helpful</string>
+    <string name="planner_editor_counter">%1$d/%2$d</string>
+    <string name="planner_editor_save_new">Add assignment</string>
+    <string name="planner_editor_save_edit">Save changes</string>
+    <string name="planner_editor_done_banner">You\'ve already ticked this one off.</string>
+    <string name="planner_editor_delete_title">Delete this assignment?</string>
+    <string name="planner_editor_delete_message">\"%1$s\" will be gone for good.</string>
+    <string name="planner_editor_delete_message_untitled">It will be gone for good.</string>
+    <string name="planner_editor_delete_confirm">Delete</string>
+    <string name="planner_date_confirm">OK</string>
+</resources>

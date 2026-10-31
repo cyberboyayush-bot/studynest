@@ -63,5 +63,4 @@
     <string name="tab_profile">Profile</string>
     <string name="tab_focus_running">Focus, session in progress</string>
     <string name="tab_focus_paused">Focus, session paused</string>
-    <string name="placeholder_coming_soon">This corner of the nest is still being built.</string>
 </resources>

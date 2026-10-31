@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Focus -->
+    <string name="focus_title">Focus</string>
+    <string name="focus_subtitle_setup">Pick a subject, choose a length, settle in.</string>
+    <string name="focus_subtitle_running">Deep in it. Everything else can wait.</string>
+    <string name="focus_subtitle_paused">Paused. Take a breath, then jump back in.</string>
+    <string name="focus_subtitle_saving">Tucking this session into your nest…</string>
+    <string name="focus_subtitle_finished">That\'s a wrap.</string>
+    <string name="focus_status_running">In session</string>
+    <string name="focus_status_paused">Paused</string>
+    <string name="focus_section_subject">What are you studying?</string>
+    <string name="focus_section_duration">How long?</string>
+    <string name="focus_no_subject">No subject</string>
+    <string name="focus_subjects_failed">Couldn\'t load your subjects.</string>
+    <string name="focus_custom">Custom</string>
+    <string name="focus_minutes_unit">min</string>
+    <string name="focus_preview_unit">minutes</string>
+    <string name="focus_preview_caption">of calm focus</string>
+    <string name="focus_preview_description">Session length %1$s</string>
+    <string name="focus_duration_description">%1$s session</string>
+    <string name="focus_custom_description">Custom length</string>
+    <string name="focus_custom_selected_description">Custom length, %1$s. Tap to change</string>
+    <string name="focus_start">Start focus</string>
+    <string name="focus_pause">Pause</string>
+    <string name="focus_resume">Resume</string>
+    <string name="focus_stop">Stop</string>
+    <string name="focus_stop_description">Stop session</string>
+    <string name="focus_remaining">remaining</string>
+    <string name="focus_paused_label">paused</string>
+    <string name="focus_of_total">of %1$s</string>
+    <string name="focus_ring_description">Focus timer, %1$s remaining of %2$s</string>
+    <string name="focus_ring_paused_description">Focus timer paused, %1$s remaining of %2$s</string>
+    <string name="focus_saving">Saving session</string>
+    <string name="focus_result_complete_title">Session complete!</string>
+    <string name="focus_result_saved_title">Nice work</string>
+    <string name="focus_result_short_title">Just a warm-up</string>
+    <string name="focus_result_error_title">Couldn\'t save that session</string>
+    <string name="focus_result_saved">Session saved · %1$s</string>
+    <string name="focus_result_too_short">Stopped early – sessions under a minute aren\'t saved</string>
+    <string name="focus_result_error_hint">Your time is safe here. Try saving again.</string>
+    <string name="focus_done">Done</string>
+    <string name="focus_retry">Retry</string>
+    <string name="focus_custom_title">Custom length</string>
+    <string name="focus_custom_body">Anything from 1 minute to 4 hours.</string>
+    <string name="focus_custom_label">Minutes</string>
+    <string name="focus_custom_placeholder">e.g. 50</string>
+    <string name="focus_custom_preview">That\'s %1$s of focus</string>
+    <string name="focus_custom_save">Use this length</string>
+
+    <!-- Insights -->
+    <string name="insights_title">Insights</string>
+    <string name="insights_subtitle">How your study week is shaping up</string>
+    <string name="insights_prev_week">Previous week</string>
+    <string name="insights_next_week">Next week</string>
+    <string name="insights_this_week">This week</string>
+    <string name="insights_last_week">Last week</string>
+    <plurals name="insights_weeks_ago">
+        <item quantity="one">%d week ago</item>
+        <item quantity="other">%d weeks ago</item>
+    </plurals>
+    <string name="insights_hero_label">Focused this week</string>
+    <string name="insights_hero_label_past">Focused that week</string>
+    <plurals name="insights_hours_unit">
+        <item quantity="one">hour</item>
+        <item quantity="other">hours</item>
+    </plurals>
+    <plurals name="insights_sessions">
+        <item quantity="one">%d session</item>
+        <item quantity="other">%d sessions</item>
+    </plurals>
+    <string name="insights_total_description">%1$s hours of focus across %2$s</string>
+    <string name="insights_streak_label">days in a row</string>
+    <string name="insights_streak_title">Current streak</string>
+    <string name="insights_longest_title">Longest streak</string>
+    <plurals name="insights_days_unit">
+        <item quantity="one">day</item>
+        <item quantity="other">days</item>
+    </plurals>
+    <string name="insights_completed_title">Completed</string>
+    <plurals name="insights_completed_unit">
+        <item quantity="one">assignment</item>
+        <item quantity="other">assignments</item>
+    </plurals>
+    <string name="insights_goal_title">Goal met</string>
+    <string name="insights_goal_value">%1$d/7</string>
+    <string name="insights_goal_unit">days at goal</string>
+    <string name="insights_daily_avg">%1$s a day</string>
+    <string name="insights_stat_description">%1$s: %2$s %3$s</string>
+    <string name="insights_daily_title">Daily focus</string>
+    <string name="insights_goal_legend">Goal %1$s</string>
+    <string name="insights_chart_minutes">%1$dm</string>
+    <string name="insights_chart_hours">%1$sh</string>
+    <string name="insights_bar_description">Daily focus minutes. %1$s. Daily goal %2$s.</string>
+    <string name="insights_bar_day">%1$s %2$s</string>
+    <string name="insights_subject_title">By subject</string>
+    <string name="insights_donut_total_unit">hours total</string>
+    <string name="insights_donut_description">Time per subject. %1$s.</string>
+    <string name="insights_donut_entry">%1$s %2$s hours, %3$d percent</string>
+    <string name="insights_legend_hours">%1$s h</string>
+    <string name="insights_legend_percent">%1$d%%</string>
+    <string name="insights_no_subject">No subject</string>
+    <string name="insights_empty_title">A quiet week</string>
+    <string name="insights_empty_body">No focus sessions logged here yet. Start one from the Focus tab and watch this space fill up.</string>
+
+    <!-- Profile -->
+    <string name="profile_title">Profile</string>
+    <string name="profile_member_since">Member since %1$s</string>
+    <string name="profile_avatar_description">Avatar for %1$s</string>
+    <string name="profile_section_study">Study settings</string>
+    <string name="profile_section_about">About</string>
+    <string name="profile_goal">Daily focus goal</string>
+    <string name="profile_goal_hint">Your target for a good day</string>
+    <string name="profile_subjects">Subjects</string>
+    <string name="profile_subjects_hint">Colours, icons and names</string>
+    <string name="profile_version">Version</string>
+    <string name="profile_fonts">Fonts: Fredoka &amp; Figtree, SIL Open Font License</string>
+    <string name="profile_tagline">Made for cosy, focused study sessions.</string>
+    <string name="profile_sign_out">Sign out</string>
+    <string name="profile_sign_out_title">Sign out?</string>
+    <string name="profile_sign_out_message">You\'ll need your email and password to get back into your nest.</string>
+    <string name="profile_goal_sheet_title">Daily focus goal</string>
+    <string name="profile_goal_sheet_body">How much focus time feels right for a good day? You can change it any time.</string>
+    <string name="profile_goal_field">Minutes per day</string>
+    <string name="profile_goal_placeholder">e.g. 90</string>
+    <string name="profile_goal_preview">That\'s %1$s a day</string>
+    <string name="profile_goal_save">Save goal</string>
+    <string name="profile_quick_picks">Quick picks</string>
+    <string name="profile_unavailable">Unavailable</string>
+</resources>
